@@ -30,7 +30,7 @@ public class Main extends HttpServlet {
     String user = userInfo.substring(0, userInfo.indexOf(':'));
     String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
-    System.setProperty('socksProxyHost', proximo.getHost());
+    System.setProperty("socksProxyHost", proximo.getHost());
 //    System.setProperty('socksProxyPort', PROXIMO_PORT);
     Authenticator.setDefault(new ProxyAuthenticator(user, password));
 
