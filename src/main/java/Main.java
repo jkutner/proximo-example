@@ -13,7 +13,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Map;
@@ -22,6 +24,15 @@ public class Main extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
+
+    URL proximo = new URL(System.getenv("PROXIMO_URL"));
+    String userInfo = proximo.getUserInfo();
+    String user = userInfo.substring(0, userInfo.indexOf(':'));
+    String password = userInfo.substring(userInfo.indexOf(':') + 1);
+
+    System.setProperty('socksProxyHost', proximo.getHost());
+//    System.setProperty('socksProxyPort', PROXIMO_PORT);
+    Authenticator.setDefault(new ProxyAuthenticator(user, password));
 
     String urlStr = "http://httpbin.org/ip";
 
@@ -59,5 +70,18 @@ public class Main extends HttpServlet {
       tmp = reader.readLine();
     }
     return output;
+  }
+
+  private class ProxyAuthenticator extends Authenticator {
+    private final PasswordAuthentication passwordAuthentication;
+
+    private ProxyAuthenticator(String user, String password) {
+      passwordAuthentication = new PasswordAuthentication(user, password.toCharArray());
+    }
+
+    @Override
+    protected PasswordAuthentication getPasswordAuthentication() {
+      return passwordAuthentication;
+    }
   }
 }
