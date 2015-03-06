@@ -31,7 +31,6 @@ public class Main extends HttpServlet {
     String password = userInfo.substring(userInfo.indexOf(':') + 1);
 
     System.setProperty("socksProxyHost", proximo.getHost());
-//    System.setProperty('socksProxyPort', PROXIMO_PORT);
     Authenticator.setDefault(new ProxyAuthenticator(user, password));
 
     String urlStr = "http://httpbin.org/ip";
